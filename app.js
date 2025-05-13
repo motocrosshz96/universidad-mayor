@@ -21,7 +21,7 @@ app.set('view engine', 'ejs');// Configura EJS como el motor de vistas.
 app.set('views',__dirname + '/views')// Configura EJS como el motor de vistas.
 
 app.use(express.static(__dirname + "/public"));// Sirve archivos estáticos desde la carpeta public.
-app.use("/mascotas",require("./router/mascotas"));// Usa el archivo de rutas de mascotas para el path /mascotas
+app.use("/mascotas",require("./router/Mascotas"));// Usa el archivo de rutas de mascotas para el path /mascotas
 
 // rutas web 
 app.use("/", require("./router/RutasWeb"));// Usa las rutas principales del sitio web}
