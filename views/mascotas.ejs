@@ -2,6 +2,10 @@
 
 <div class="container">
 
+    <div class="mb-3">
+    <a href="/mascotas/agregar" class="btn btn-primary">Agregar Mascota</a>
+    </div>
+
         <table class="table">
             <thead>
                 <tr>                        
@@ -16,10 +20,17 @@
                 <% if (arrayMascotas.length > 0) { %>
                     <% arrayMascotas.forEach(mascota => { %>
                         <tr>
-                            <th scope="row"><%= mascota.id %></th>
+                            <th scope="row"><%= mascota._id %></th>
                             <td><%= mascota.nombre %></td>
                             <td><%= mascota.descripcion %></td>
-                            <td>@mdo</td>
+                            <td>
+                                <a href="/mascotas/<%= mascota._id %>" class="btn btn-info btn-sm">Ver</a>
+                                <a href="/mascotas/<%= mascota._id %>/editar" class="btn btn-warning btn-sm">Editar</a>
+                                <form action="/mascotas/<%= mascota._id %>?_method=DELETE" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                </form>
+                            </td>
+
                         </tr>
                     <% }) %>
                 <% } %>

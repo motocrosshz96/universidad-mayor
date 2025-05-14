@@ -1,0 +1,13 @@
+<%- include("template/cabecera", { tituloweb: "Detalle de Mascota" }) %>
+
+<div class="container mt-4">
+    <h2>Detalle de Mascota</h2>
+    <ul class="list-group">
+        <li class="list-group-item"><strong>ID:</strong> <%= mascota._id %></li>
+        <li class="list-group-item"><strong>Nombre:</strong> <%= mascota.nombre %></li>
+        <li class="list-group-item"><strong>Descripción:</strong> <%= mascota.descripcion %></li>
+    </ul>
+    <a href="/mascotas" class="btn btn-secondary mt-3">Volver</a>
+</div>
+
+<%- include("template/footer") %>
