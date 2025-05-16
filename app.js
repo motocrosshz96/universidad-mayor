@@ -1,38 +1,50 @@
-const express = require('express'); // Importa el framework Express para crear el servidor.
-const app = express(); // Crea una instancia de la aplicación Express.
+const express = require('express');
+const app = express();
 
-require('dotenv').config(); // Carga las variables de entorno desde un archivo .env.
+require('dotenv').config();
 
-const port = process.env.PORT || 3000; // Define el puerto del servidor, tomando el de la variable de entorno o el 3000 por defecto.
+const port = process.env.PORT || 3000;
 
-// Conexion a base de datos
-const mongoose = require('mongoose'); // Importa Mongoose para conectar y usar MongoDB.
+const mongoose = require('mongoose');
+const methodOverride = require('method-override');
+const session = require('express-session');
 
-// Crea la URI de conexión a MongoDB usando las variables de entorno.
 const uri = `mongodb+srv://${process.env.USER}:${process.env.PASSWORD}@cluster0.tx7kels.mongodb.net/${process.env.DBNAME}?retryWrites=true&w=majority&appName=Cluster0`;
 
-mongoose.connect(uri) // Intenta conectarse a MongoDB con la URI
-    .then(() => console.log("✅ Base de datos conectada correctamente")) // Si la conexión es exitosa
-    .catch((e) => console.error("❌ Error de conexión a MongoDB:", e)); // Si hay un error en la conexión
+mongoose.connect(uri)
+    .then(() => console.log("✅ Base de datos conectada correctamente"))
+    .catch((e) => console.error("❌ Error de conexión a MongoDB:", e));
 
-// Middleware para procesar datos de formularios
-app.use(express.urlencoded({ extended: true })); // Para formularios con datos tipo 'x-www-form-urlencoded'
-app.use(express.json()); // Para datos en formato JSON
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-// Agregar method-override aquí, después de la configuración de express.urlencoded() y express.json()
-const methodOverride = require('method-override');
-app.use(methodOverride('_method')); // Usa method-override para permitir PUT y DELETE en formularios
+app.use(methodOverride('_method'));
 
-// Motor de plantillas
-app.set('view engine', 'ejs'); // Configura EJS como el motor de vistas.
-app.set('views', __dirname + '/views'); // Configura el directorio de vistas.
+app.set('view engine', 'ejs');
+app.set('views', __dirname + '/views');
 
-app.use(express.static(__dirname + "/public")); // Sirve archivos estáticos desde la carpeta public.
+app.use(express.static(__dirname + "/public"));
 
-// Rutas
-app.use("/mascotas", require("./router/Mascotas")); // Usa el archivo de rutas de mascotas para el path /mascotas
-app.use("/", require("./router/RutasWeb")); // Usa las rutas principales del sitio web
-app.use("/", require("./router/perro")); // Otra ruta de perros
+app.use(session({
+    secret: 'tu_clave_secreta_aqui', // Cambia esto por algo seguro
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 1000 * 60 * 60 } // 1 hora
+}));
+
+// 👇 Middleware para que `session` esté disponible en todas las vistas EJS
+app.use((req, res, next) => {
+    res.locals.session = req.session;
+    next();
+});
+
+// Tus rutas principales (las que ya tenías)
+app.use("/mascotas", require("./router/Mascotas"));
+app.use("/", require("./router/RutasWeb"));
+app.use("/", require("./router/perro"));
+
+// Aquí agregamos la ruta para usuarios con prefijo /usuarios
+app.use("/usuarios", require("./router/usuarios"));
 
 // Middleware para errores 404
 app.use((req, res, next) => {
@@ -42,6 +54,6 @@ app.use((req, res, next) => {
     });
 });
 
-app.listen(port, () => { // Inicia el servidor en el puerto definido
+app.listen(port, () => {
     console.log('Servidor a su servicio', port);
 });

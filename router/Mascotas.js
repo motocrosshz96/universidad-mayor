@@ -1,28 +1,43 @@
 const express = require("express");
 const router = express.Router();
 const Mascota = require("../models/mascota");
+const verificarAutenticacion = require('../middleware/auth');
+
+// 🔐 Aplica el middleware a todas las rutas de este archivo
+router.use(verificarAutenticacion);
 
 // Mostrar todas las mascotas
 router.get("/", async (req, res) => {
     try {
         const arrayMascotasDB = await Mascota.find();
-        res.render("mascotas", { arrayMascotas: arrayMascotasDB });
+        res.render("mascotas", { 
+            arrayMascotas: arrayMascotasDB,
+            usuarioNombre: req.session.usuario ? req.session.usuario.nombre : null
+        });
     } catch (error) {
         console.log(error);
-        res.render("mascotas", { arrayMascotas: [] });
+        res.render("mascotas", { 
+            arrayMascotas: [],
+            usuarioNombre: null
+        });
     }
 });
 
 // Mostrar formulario para agregar una nueva mascota
 router.get("/agregar", (req, res) => {
-    res.render("agregar"); // Asegúrate de tener una vista llamada agregar.ejs
+    res.render("agregar", { 
+        usuarioNombre: req.session.usuario ? req.session.usuario.nombre : null 
+    }); // Asegúrate de tener una vista llamada agregar.ejs
 });
 
 // Ver detalle de una mascota
 router.get("/:id", async (req, res) => {
     try {
         const mascotaDB = await Mascota.findById(req.params.id);
-        res.render("detalle", { mascota: mascotaDB });
+        res.render("detalle", { 
+            mascota: mascotaDB,
+            usuarioNombre: req.session.usuario ? req.session.usuario.nombre : null
+        });
     } catch (error) {
         console.log(error);
         res.status(404).render("404", { error: "Mascota no encontrada" });
@@ -33,7 +48,10 @@ router.get("/:id", async (req, res) => {
 router.get("/:id/editar", async (req, res) => {
     try {
         const mascotaDB = await Mascota.findById(req.params.id);
-        res.render("editar", { mascota: mascotaDB });
+        res.render("editar", { 
+            mascota: mascotaDB,
+            usuarioNombre: req.session.usuario ? req.session.usuario.nombre : null
+        });
     } catch (error) {
         console.log(error);
         res.status(404).render("404", { error: "Mascota no encontrada" });
@@ -46,9 +64,8 @@ router.put("/:id", async (req, res) => {
     const { nombre, descripcion } = req.body;
 
     try {
-        // Actualiza la mascota con el id correspondiente
         await Mascota.findByIdAndUpdate(id, { nombre, descripcion });
-        res.redirect("/mascotas"); // Redirige a la página de todas las mascotas
+        res.redirect("/mascotas");
     } catch (error) {
         console.log(error);
         res.status(500).render("404", { error: "Error al actualizar la mascota" });
@@ -56,10 +73,10 @@ router.put("/:id", async (req, res) => {
 });
 
 // Eliminar mascota (ruta DELETE)
-router.delete("/:id", async (req, res) => { // Cambiar GET por DELETE
+router.delete("/:id", async (req, res) => {
     try {
         await Mascota.findByIdAndDelete(req.params.id);
-        res.redirect("/mascotas"); // Redirige al listado de mascotas
+        res.redirect("/mascotas");
     } catch (error) {
         console.log(error);
         res.status(500).render("404", { error: "Error al eliminar mascota" });
@@ -72,8 +89,8 @@ router.post("/", async (req, res) => {
 
     try {
         const nuevaMascota = new Mascota({ nombre, descripcion });
-        await nuevaMascota.save(); // Guarda en la base de datos
-        res.redirect("/mascotas"); // Redirige al listado
+        await nuevaMascota.save();
+        res.redirect("/mascotas");
     } catch (error) {
         console.log(error);
         res.status(500).render("404", { error: "Error al agregar mascota" });

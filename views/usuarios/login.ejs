@@ -1,0 +1,19 @@
+<%- include('../template/header') %>
+
+<div class="container mt-5">
+    <h2 class="mb-4"><%= tituloweb %></h2>
+    <form action="/usuarios/login" method="POST" class="card p-4 shadow-sm bg-light">
+        <div class="mb-3">
+            <label for="email" class="form-label">Correo electrónico:</label>
+            <input type="email" name="email" id="email" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Contraseña:</label>
+            <input type="password" name="password" id="password" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Ingresar</button>
+    </form>
+</div>
+
+<%- include('../template/footer') %>
+

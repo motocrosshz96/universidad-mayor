@@ -1,51 +1,57 @@
-<%- include("template/cabecera", {tituloweb: "pagina de inicio"}) %>
+<%- include("template/cabecera", { tituloweb: "pagina de inicio" }) %>
 
 <div class="container">
 
+    <% if (usuarioNombre) { %>
+        <p class="mb-4 fs-4">Bienvenido <strong><%= usuarioNombre %></strong></p>
+    <% } %>
+
     <div class="mb-3">
-    <a href="/mascotas/agregar" class="btn btn-primary">Agregar Mascota</a>
+        <a href="/mascotas/agregar" class="btn btn-primary">Agregar Mascota</a>
     </div>
 
-        <table class="table">
-            <thead>
-                <tr>                        
-                    <th scope="col">#</th>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Descripcion</th>
-                    <th scope="col">Accion</th>
-                </tr>
-            </thead>
-            <tbody>
+    <table class="table">
+        <thead>
+            <tr>                        
+                <th scope="col">#</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Descripcion</th>
+                <th scope="col">Accion</th>
+            </tr>
+        </thead>
+        <tbody>
 
-                <% if (arrayMascotas.length > 0) { %>
-                    <% arrayMascotas.forEach(mascota => { %>
-                        <tr>
-                            <th scope="row"><%= mascota._id %></th>
-                            <td><%= mascota.nombre %></td>
-                            <td><%= mascota.descripcion %></td>
-                            
-                            <td>
-                                <div class="d-flex flex-wrap gap-2">
-                                    <a href="/mascotas/<%= mascota._id %>" class="btn btn-success btn-sm rounded-pill px-3">
+            <% if (arrayMascotas.length > 0) { %>
+                <% arrayMascotas.forEach(mascota => { %>
+                    <tr>
+                        <th scope="row"><%= mascota._id %></th>
+                        <td><%= mascota.nombre %></td>
+                        <td><%= mascota.descripcion %></td>
+                        
+                        <td>
+                            <div class="d-flex flex-row justify-content-start align-items-center gap-2 flex-nowrap">
+                                <a href="/mascotas/<%= mascota._id %>" class="btn btn-success btn-sm rounded-pill px-3">
                                     Ver
-                                    </a>
-                                    <a href="/mascotas/<%= mascota._id %>/editar" class="btn btn-info btn-sm rounded-pill px-3 text-white">
+                                </a>
+                                <a href="/mascotas/<%= mascota._id %>/editar" class="btn btn-info btn-sm rounded-pill px-3 text-white">
                                     Editar
-                                    </a>
-                                    <a href="/mascotas/<%= mascota._id %>/eliminar" class="btn btn-danger btn-sm rounded-pill px-3">
+                                </a>
+                                <a href="/mascotas/<%= mascota._id %>/eliminar" class="btn btn-danger btn-sm rounded-pill px-3">
                                     Eliminar
-                                    </a>
-                                </div>
-                            </td>
-
-                        </tr>
-                    <% }) %>
-                <% } %>
-                
-            </tbody>
-        </table>
-
-        
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                <% }) %>
+            <% } else { %>
+                <tr>
+                    <td colspan="4" class="text-center">No hay mascotas registradas.</td>
+                </tr>
+            <% } %>
+            
+        </tbody>
+    </table>
+    
 </div>
 
 <%- include("template/footer") %>
